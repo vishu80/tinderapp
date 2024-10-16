@@ -1,20 +1,30 @@
 const express=require('express');
 const app = express();
 
-app.use('/hello', (req, res) => {
-  res.send('Hello World!');
+app.get('/user/:name', (req, res) => {
+  res.send({
+    name:req.params.name,
+    id:req.query.id,
+    value:req.query.value
+  });
 });
-app.use('/',(req,res)=>{
-  res.send('Welcome to my API');
+app.get(/a/,(req, res) => {
+
+  res.send('test the regex api request');
+})
+app.post('/user',(req,res)=>{
+  res.send('test the  api request post api');
+
+})
+app.delete('/user',(req,res)=>{
+  res.send('First api request deleted');
+
+})
+app.put('/',(req,res)=>{
+  res.send('Welcome to my API put');
  });
 
 
-app.use('/123',(req,res)=>{
-    res.send('First api request');
 
-})
-app.use('/test',(req,res)=>{
-    res.send('test the  api request');
 
-})
 app.listen(7777)
