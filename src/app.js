@@ -1,47 +1,34 @@
 const express = require("express");
+const {authToken,userAuth} =require('../src/middleware/adminAuth')
 const app = express();
 
-// app.get("/user/:name", (req, res) => {
-//   res.send({
-//     name: req.params.name,
-//     id: req.query.id,
-//     value: req.query.value,
-//   });
-// });
-// // app.get(/a/, (req, res) => {
-// //   res.send("test the regex api request");
-// // });
-// app.post("/user", (req, res) => {
-//   res.send("test the  api request post api");
-// });
-// app.delete("/user", (req, res) => {
-//   res.send("First api request deleted");
-// });
+//use cases of use of express
 
 
-// app.put("/", (req, res) => {
-//   res.send("Welcome to my API put");
-// });
+app.use('/admin',authToken
+)
 
-//Routing and multple middleware for expres
+app.get("/admin/adminDetails", (req, res) => {
+  res.send({
+    name: 'vishal',
+    id:'12',
+    email:'vishal@gmail.com',
+  });
+});
+app.get("/admin/adminName", (req, res) => {
+  res.send({
+    name: 'vishal',
+  });
+});
 
-const cb1=(req,res,next)=>{
-  console.log('cb1 function was called');
-  next();
+app.use('/user',userAuth)
+app.get('/user/userDetails', (req, res,next) => {
+res.send({name:'vishal',place:'jamshep',email:'vishal@gmail.com'})
 
-}
+})
 
-const cb2=(req,res,next)=>{
-  console.log('cb2 functionwas called');
-  next();
-}
-
-const cb3=(req,res,next)=>{
-console.log('cb3 functionwas called');
-res.send('finally cb3 was called')
-}
-app.post(
-  "/admin",[cb1, cb2, cb3]
-
-);
+app.post('/user/userDetails/postmethod', (req, res,next) => {
+  res.send({name:'vishal',place:'jamshep',email:'vishal@gmail.com'})
+  
+  })
 app.listen(7777);
