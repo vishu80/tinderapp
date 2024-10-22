@@ -62,6 +62,64 @@ app.post('/signUp',async (req, res, next) => {
   }
 });
 
+app.get('/users', async (req, res) => {
+  
+  try{
+  // const user = await userModel.find({}); // this will return all the user passing empty object inside find method
+  const user=await userModel.findOne({email:req.body.email}); //this will return only one user from the database based on email
+  res.send(user)
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).send({error:error.message})
+  }
+
+})
+
+app.delete('/users',async function(req, res) {
+
+  const id=req.body.id
+  try{
+    const user=await userModel.findByIdAndDelete(id);
+    if(!user) return res.status(404).send({message:'User not found'})
+    res.send(user)
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).send({error:error.message})
+  }
+
+})
+
+app.put('/users',async function(req, res) {
+
+  const id=req.body.id
+  try{
+    const user=await userModel.findByIdAndUpdate(id,req.body);
+    if(!user) return res.status(404).send({message:'User not found'})
+    res.send(user)
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).send({error:error.message})
+  }
+
+})
+app.patch('/users',async function(req, res) {
+
+  const id=req.body.id
+  try{
+    const user=await userModel.findByIdAndUpdate(id,req.body);
+    if(!user) return res.status(404).send({message:'User not found'})
+    res.send(user)
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).send({error:error.message})
+  }
+
+})
+
   mongodbConnection.then(()=>{
       console.log('Db connection established')
       app.listen(7777,()=>{
