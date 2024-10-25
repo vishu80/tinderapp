@@ -3,7 +3,8 @@ const {authToken,userAuth} =require('../src/middleware/adminAuth')
 const app = express();
 const {mongodbConnection}=require('../dbConfig.js')
 const {userModel} = require('../src/models/userModels.js')
-console.log(userModel,'user')
+
+const {validateEmail} = require('../src/utils/validationfile.js');
 //use cases of use of express
 
 
@@ -51,14 +52,27 @@ console.log(userModel,'user')
 
 app.use(express.json())//this is used by express to recognise the incoming request object as a JSON object
 app.post('/signUp',async (req, res, next) => {
-  const user=new userModel(req.body); //creating a new instance of userModel 
+ 
   try{
-    await user.save() // data will be store in mongodb 
-    res.send({message:'user created successfully'})
+    const user=new userModel(req.body); //creating a new instance of userModel 
+    const {firstName,lastName,password,email}=req.body
+    if(!validateEmail(email))
+    {
+      throw new Error('Invalid Email')
+    }
+    else 
+    {
+    await user.save({
+      firstName:firstName,
+      lastName:lastName,
+      email:email,
+      password:password
+    }) // data will be store in mongodb 
+    res.send({message:+'user created successfully'})
+  }
   }
   catch(error){
-    console.log(error)
-    res.status(400).send({error:error.message})
+    res.status(400).send({message:error.message})
   }
 });
 
