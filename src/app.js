@@ -95,7 +95,8 @@ app.put('/users',async function(req, res) {
 
   const id=req.body.id
   try{
-    const user=await userModel.findByIdAndUpdate(id,req.body);
+    const user=await userModel.findByIdAndUpdate(id,req.body,{      runValidators:true
+    });
     if(!user) return res.status(404).send({message:'User not found'})
     res.send(user)
   }
@@ -105,20 +106,31 @@ app.put('/users',async function(req, res) {
   }
 
 })
-app.patch('/users',async function(req, res) {
-
-  const id=req.body.id
+app.patch('/users/:userId',async function(req, res) {
+  const id=req.params?.userId
+  // const id=req.body.id
   try{
-    const user=await userModel.findByIdAndUpdate(id,req.body);
+    const ALLOWED_TO_UPDATE=['firstName', 'lastName', 'skills', 'photoUrl','password','gender']
+    const updateKeys=Object.keys(req.body).every(key=>ALLOWED_TO_UPDATE.includes(key))
+    if(!updateKeys)
+    {
+      throw new Error('Updation of email id is not allowed')
+      // res.status(404).send({message:'Updation of email address is not allowed'})//this causing cannot set headers after they send to clien
+    }
+    const user=await userModel.findByIdAndUpdate(id,req.body,{
+    runValidators:true // here runvalidators is required for to run validators while updating
+    });  
     if(!user) return res.status(404).send({message:'User not found'})
     res.send(user)
   }
   catch(error){
     console.log(error)
-    res.status(500).send({error:error.message})
+    res.status(500).send("message:"+error.message)
   }
 
 })
+
+//email id should not be updated 
 
   mongodbConnection.then(()=>{
       console.log('Db connection established')
